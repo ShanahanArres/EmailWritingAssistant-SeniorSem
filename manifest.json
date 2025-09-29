@@ -1,9 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Hello Extension",
+  "name": "Email Assistant Auto Suggest",
   "version": "1.0",
-  "description": "A simple extension that says hello",
-  "action": {
-    "default_popup": "popup.html"
-  }
+  "permissions": ["scripting", "activeTab"],
+  "host_permissions": ["http://127.0.0.1:5000/*", "https://mail.google.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"]
+    }
+  ]
 }

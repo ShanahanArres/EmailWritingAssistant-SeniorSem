@@ -1,0 +1,7 @@
+@echo off
+REM Activate the venv
+call venvScriptsactivate.bat
+REM Run your script
+python main.py.py
+REM Pause so you can see output before closing
+pause

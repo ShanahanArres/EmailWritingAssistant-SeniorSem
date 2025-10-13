@@ -1,13 +1,40 @@
 {
   "manifest_version": 3,
   "name": "Email Assistant Auto Suggest",
-  "version": "1.0",
-  "permissions": ["scripting", "activeTab"],
-  "host_permissions": ["http://127.0.0.1:5000/*", "https://mail.google.com/*"],
+  "description": "Suggests and creates calendar events based on Gmail drafts.",
+  "version": "1.1",
+  "permissions": [
+    "scripting",
+    "activeTab",
+    "identity",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:5000/*",
+    "https://mail.google.com/*",
+    "https://www.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["https://mail.google.com/*"],
       "js": ["content.js"]
     }
-  ]
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "oauth2": {
+    "client_id": "551097775259-b9v5ea6g0b0rd7gdgifgtm89a4tq95ts.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/calendar.events"
+    ]
+  }
 }

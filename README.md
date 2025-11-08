@@ -3,7 +3,7 @@ Project Overview
 The extension frontend (popup + content script) sends the current draft to a local Flask backend, which invokes a local LLM through the ollama CLI to generate contextual suggestions.
 
 Folder Structure
-- ├── manifest.json
+  ├── manifest.json
   ├── popup.html
   ├── popup.js
   ├── content.js

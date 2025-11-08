@@ -1,6 +1,9 @@
 Project Overview
-- This repository contains a Chrome Extension (Manifest V3) that augments Gmail with AI-powered email suggestions.
-The extension frontend (popup + content script) sends the current draft to a local Flask backend, which invokes a local LLM through the ollama CLI to generate contextual suggestions.
+This project implements a **Chrome Extension (Manifest V3)** that integrates an AI-powered email assistant into **Gmail** and **Outlook**.  
+The extension enhances email composition by generating refined, professional drafts and automatically identifying scheduling details to create calendar events.  
+
+The frontend (popup + content scripts) communicates with a **local Flask backend**, which processes text through a **Language Model (AI Text Processor)**.  
+When meeting-related information (such as date, time, or attendees) is detected, the system connects with **Google Calendar** or **Outlook Calendar** APIs to create events automatically.
 
 Folder Structure
   ├── manifest.json
@@ -21,32 +24,60 @@ chrome.scripting.executeScript to read and modify the email body.
 -Backend/app.py — Flask backend exposing an API endpoint that calls the ollama CLI using subprocess.run.
 -Backend/run.bat — Helper batch script to activate the virtual environment and start the backend on Windows.
 
-Important project-specific notes and conventions
--Endpoint mismatch
-  The frontend currently POSTs to http://127.0.0.1:5000/suggest, while the backend defines
-  @app.route("/generate-suggestion").
-  Fix this by either:
-    -updating the frontend fetch URL to generate-suggestion,or
-    -renaming the Flask route to /suggest in Backend/main.py.
-Local LLM requirement
-The backend expects the ollama CLI to be installed and accessible in PATH.
-If missing, requests will fail with a FileNotFoundError (a JSON 500 response is returned).
+**Important project-specific notes and conventions**
+Endpoint Alignment
+The frontend may POST to `/suggest` while the backend defines `/generate-suggestion`.  
+To fix mismatches:
+- Update the frontend fetch URL to match the backend route, **or**
+- Rename the Flask route in `app.py` to `/suggest`.
+
+Local Model Requirements
+The backend expects a local AI runtime (e.g., Ollama CLI or similar).  
+Ensure the model runtime is installed and accessible in your system’s PATH.  
+If not found, the backend returns a `FileNotFoundError` or JSON 500 response.
 
 Permissions
-manifest.json includes the correct host_permissions for http://127.0.0.1:5000/*,
-allowing fetch requests from the extension to the backend.
+manifest.json includes the correct host_permissions for:
+http://127.0.0.1:5000/*
+https://mail.google.com/*
+https://outlook.office.com/*
+These allow secure cross-origin requests between the extension and backend.
 
+**Installation and Setup**
 Concrete run / debug steps (Windows)
 1. Create & activate a virtualenv in `Backend` (optional but recommended):
-   - python -m venv venv
-   - venv\Scripts\activate
+   ```bash
+   cd Backend
+   python -m venv venv
+   venv\Scripts\activate
 2. Install dependencies:
-   - pip install flask
+   - pip install -r requirements.txt
 3. Run the backend (from `Backend`):
    - python app.py
 4. Confirm the backend is listening on 127.0.0.1:5000 (open http://127.0.0.1:5000/ in browser or curl).
 5. Load the extension (unpacked) into Chrome/Chromium via chrome://extensions and toggle developer mode.
 6. Open Gmail, open the popup and try the Suggest flow; if nothing happens, open DevTools for the page and the extension (and check the background service worker console) for errors.
+
+Using the Extension
+-Open Gmail or Outlook in Chrome.
+-Click Compose or Reply to start an email.
+-The “Generate Reply” button appears in the compose box.
+-Type your draft or notes, then click Generate Reply.
+-The text is sent to the Flask backend.
+-The backend runs the Language Model, which returns a refined version of your email.
+-If meeting details are detected, the Calendar Event Creation feature is triggered.
+-The refined draft is automatically injected back into the compose window for review.
+
+Calendar Event Creation Workflow
+1. The backend analyzes your text for meeting intent and scheduling details, such as:
+    -Date and time
+    -Attendees or participants
+    -Keywords like “meeting,” “call,” or “appointment”
+2. The extracted information is formatted into a structured calendar event request.
+3. Using authenticated credentials, the system connects to Google Calendar or Outlook Calendar.
+4. The event is automatically created and confirmed.
+5. A confirmation notification appears, verifying successful scheduling.
+This integration unifies writing and scheduling in a single, automated workflow.
 
 Common error checklist (targeted, actionable)
 - "Fetch fails" or network error:
@@ -58,18 +89,21 @@ Common error checklist (targeted, actionable)
   - Ensure you activate the correct virtualenv and `pip install flask`.
 - Extension permission errors or CORS-like failures:
   - Confirm `manifest.json` contains `host_permissions` for the backend; background/service worker logs will show blocked requests.
-- Windows run script problems:
-  - `Backend/run.bat.txt` is a helper (text file) — open and make sure it calls the correct activate script path: `venv\Scripts\activate.bat`. Running it directly may require renaming to `run.bat`.
+- Button not appearing in Gmail/Outlook
+  -DOM may not be loaded, simply refresh or reopen compose window
+-Calendar event not created
+  -Invalid or missing credentials, re-authenticate calendar API access 
 
 Where to change behavior (file pointers)
-- To change UI/DOM selectors for Gmail editor: edit `popup.js` and `content.js` (they use `div[aria-label='Message Body']`).
-- To change the backend API name or behavior: edit `Backend/app.py` (Flask route). Look for `@app.route("/generate-suggestion")` and the `subprocess.run(["ollama", "run", "llama2"])` call.
-
-Minimal examples for agents
-- If you need to make the simplest, low-risk change to make the extension work, update `popup.js`/`content.js` fetch URLs to match the backend route:
-  - replace `http://127.0.0.1:5000/suggest` -> `http://127.0.0.1:5000/generate-suggestion`
-- If you prefer renaming backend: rename `Backend/app.py` -> `Backend/app.py` and update `run.bat`/instructions accordingly.
+-Gmail editor selectors: popup.js / content.js → div[aria-label='Message Body']
+-Backend route: Backend/app.py → @app.route("/generate-suggestion")
+-Calendar logic: Inside app.py or calendar_service.py
+-Model invocation: Adjust the subprocess.run() command to use your preferred local model runtime.
   
 License/Notes
--This project was developed for academic and educational purposes (Senior Seminar Capstone).
--It demonstrates integration of a local AI model into a privacy-focused Chrome extension.
+This project was developed for academic and educational purposes as part of a Senior Seminar Capstone Project.
+It demonstrates local AI integration into a browser extension to support:
+  -Email refinement
+  -Automated meeting scheduling
+  -User privacy via local processing
+Future versions will support deployment to the Chrome Web Store for simplified installation.

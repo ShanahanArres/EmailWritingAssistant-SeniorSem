@@ -69,6 +69,7 @@ Minimal examples for agents
 - If you need to make the simplest, low-risk change to make the extension work, update `popup.js`/`content.js` fetch URLs to match the backend route:
   - replace `http://127.0.0.1:5000/suggest` -> `http://127.0.0.1:5000/generate-suggestion`
 - If you prefer renaming backend: rename `Backend/app.py` -> `Backend/app.py` and update `run.bat`/instructions accordingly.
+  
 License/Notes
 -This project was developed for academic and educational purposes (Senior Seminar Capstone).
 -It demonstrates integration of a local AI model into a privacy-focused Chrome extension.

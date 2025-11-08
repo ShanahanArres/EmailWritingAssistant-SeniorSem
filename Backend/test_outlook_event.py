@@ -1,0 +1,12 @@
+import requests
+
+response = requests.post(
+    "http://127.0.0.1:5000/create-outlook-event",
+    json={
+        "auth_code": "1.ATcAyZ3Jd-80jEa41gzyTh0jwtAZIME6ZahLsXlQe5MUyV3QATM3AA.AgABBAIAAABlMNzVhAPUTrARzfQjWPtKAwDs_wUA9P-Qz48KfVZkRNoWKWPzaMDo_9RDHoqyCp_E88hfj3WsPLHuM5_409D-LPB8pKv_RF366TyOizi9cllR8wqK1T1xPAWuT7qDnF9U4RhjUeky68DBKZJWdJYiqRc2_k8hN-ZoqXjpOWNvpNPRfP_F1Yfnh1AA_Qz2XzA8a5l4Odkc1w5yfE3RsR15oCTknA9ElVgpsJIeOPsZ7VHQCoUZIVe1n0AU3UPuKEGMapNUKqts-xn9tL6Bm_pkmvut3i9p_matF5HHoy6PGeUcQ6-oN6-FQeaSKeHPBI7Kp9z47jTUKkNZ_9UM6HE3H4KufiGvuPo2UVdbnOYQdcbUC_mZasW9VfqHeq5QHULd3BRerj7Q_WUpBwXid-YfKLu1kCLBaBsnyRLasZz5hQ-ba1t_eZQvBZIpn_LzJvO2s1V6JcECWpQPxg3DU3MuvcEU6c8rudsdkncxKANsMFnn9620ZwspGqvgOKMHHkqJzdrjr826d1wT4LvBdkjYjSuSBWT56xbH0u5JjOCPCK7mBIlVlkauiAEfxiRmazpxhJngSkFQPP7Sx6J9dysC49WZ-sCR8XFbpS7mq3F4uGc278JH9Wo5TV-9OZamPMB9cElM3ptGG6yS0axvrP10R2GB31oMtrowKV3NSOWm6anEjBpNEow_BSK_vwkHXEsOo_efRNZzjzZ0squcPC55ZqyamZYQ1tNwhr9XycR-pzIxKNmVb255IL0fEoGdKhGT5cqIzNK9MCi5_2VtosAokMhSHZVBuR5AOtLsGjiCh1yjclyjAzenNzl_pR9n78i6EncfG69sjRi7fnVslSt9JkEsvHJPju6Asbq5DRWD-NLZYCvN5XTmdQ6wLSp9treIyQkpYH5vf3egfwAlqwmFf3qs2DsyHYp-aLQMVf1ih-0dawZxz8fraF663M5UIE7SxLFx_E8iQdcZR6i_QZPNb3SltbwGBQfAk8LucwEBs6S1LiYPrszpwy3xF-og",
+        "summary": "Friendsgiving Dinner",
+        "start_time": "2025-11-11T18:00:00",
+        "end_time": "2025-11-11T20:00:00"
+    }
+)
+print(response.json())
